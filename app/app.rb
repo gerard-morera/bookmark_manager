@@ -1,5 +1,5 @@
 require 'sinatra/base'
-require 'pry'
+# require 'pry'
 require './app/data_mapper_setup.rb'
 
 class BookmarkManager < Sinatra::Base
