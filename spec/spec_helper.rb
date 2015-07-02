@@ -1,17 +1,21 @@
 
 require File.join(File.dirname(__FILE__), '..', 'app/app.rb')
+ENV['RACK_ENV'] = 'test'
+
 require './app/data_mapper_setup.rb'
 require 'capybara'
 require 'capybara/rspec'
 require 'rspec'
 require 'tilt/erb'
+require 'database_cleaner'
 
 Capybara.app = BookmarkManager
 
-ENV['RACK_ENV'] = 'test'
+
 
 
 RSpec.configure do |config|
+
   config.include Capybara::DSL
 
   config.expect_with :rspec do |expectations|
@@ -21,6 +25,20 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
